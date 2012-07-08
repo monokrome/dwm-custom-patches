@@ -1,6 +1,6 @@
-diff -up dwm-6.0-original/config.h dwm-6.0-modified/config.h
---- dwm-6.0-original/config.h	2012-07-08 05:27:48.894632470 -0600
-+++ dwm-6.0-modified/config.h	2012-07-08 05:25:32.071300516 -0600
+diff -up dwm-6.0-original/config.h dwm-6.0-custom/config.h
+--- dwm-6.0-original/config.h	2012-07-08 05:49:11.864619944 -0600
++++ dwm-6.0-custom/config.h	2012-07-08 05:49:16.704612747 -0600
 @@ -93,7 +93,6 @@ static Button buttons[] = {
  	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
  	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
@@ -9,10 +9,10 @@ diff -up dwm-6.0-original/config.h dwm-6.0-modified/config.h
  	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
  	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
  	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-Binary files dwm-6.0-original/dwm and dwm-6.0-modified/dwm differ
-diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
---- dwm-6.0-original/dwm.c	2011-12-19 08:02:46.000000000 -0700
-+++ dwm-6.0-modified/dwm.c	2012-07-08 05:29:24.464631502 -0600
+Binary files dwm-6.0-original/dwm and dwm-6.0-custom/dwm differ
+diff -up dwm-6.0-original/dwm.c dwm-6.0-custom/dwm.c
+--- dwm-6.0-original/dwm.c	2012-07-08 05:48:47.104619449 -0600
++++ dwm-6.0-custom/dwm.c	2012-07-08 05:50:55.194618037 -0600
 @@ -62,7 +62,7 @@ enum { NetSupported, NetWMName, NetWMSta
         NetWMFullscreen, NetActiveWindow, NetWMWindowType,
         NetWMWindowTypeDialog, NetLast };     /* EWMH atoms */
@@ -47,15 +47,16 @@ diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
  		else
  			click = ClkWinTitle;
  	}
-@@ -717,7 +713,6 @@ dirtomon(int dir) {
+@@ -717,7 +713,7 @@ dirtomon(int dir) {
  
  void
  drawbar(Monitor *m) {
 -	int x;
++  int x;
  	unsigned int i, occ = 0, urg = 0;
  	unsigned long *col;
  	Client *c;
-@@ -739,28 +734,7 @@ drawbar(Monitor *m) {
+@@ -739,18 +735,8 @@ drawbar(Monitor *m) {
  	dc.w = blw = TEXTW(m->ltsymbol);
  	drawtext(m->ltsymbol, dc.norm, False);
  	dc.x += dc.w;
@@ -71,21 +72,12 @@ diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
 -	}
 -	else
 -		dc.x = m->ww;
--	if((dc.w = dc.x - x) > bh) {
--		dc.x = x;
--		if(m->sel) {
--			col = m == selmon ? dc.sel : dc.norm;
--			drawtext(m->sel->name, col, False);
--			drawsquare(m->sel->isfixed, m->sel->isfloating, False, col);
--		}
--		else
--			drawtext(NULL, dc.norm, False);
--	}
-+
- 	XCopyArea(dpy, dc.drawable, m->barwin, dc.gc, 0, 0, m->ww, bh, 0, 0);
- 	XSync(dpy, False);
- }
-@@ -1293,9 +1267,7 @@ propertynotify(XEvent *e) {
++  x = dc.x;
++  dc.x = m->ww;
+ 	if((dc.w = dc.x - x) > bh) {
+ 		dc.x = x;
+ 		if(m->sel) {
+@@ -1293,9 +1279,7 @@ propertynotify(XEvent *e) {
  	Window trans;
  	XPropertyEvent *ev = &e->xproperty;
  
@@ -96,7 +88,7 @@ diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
  		return; /* ignore */
  	else if((c = wintoclient(ev->window))) {
  		switch(ev->atom) {
-@@ -1625,7 +1597,6 @@ setup(void) {
+@@ -1625,7 +1609,6 @@ setup(void) {
  		XSetFont(dpy, dc.gc, dc.font.xfont->fid);
  	/* init bars */
  	updatebars();
@@ -104,7 +96,7 @@ diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
  	/* EWMH support per view */
  	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
  			PropModeReplace, (unsigned char *) netatom, NetLast);
-@@ -2004,13 +1975,6 @@ updatetitle(Client *c) {
+@@ -2004,13 +1987,6 @@ updatetitle(Client *c) {
  }
  
  void
@@ -118,3 +110,4 @@ diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
  updatewindowtype(Client *c) {
  	Atom state = getatomprop(c, netatom[NetWMState]);
  	Atom wtype = getatomprop(c, netatom[NetWMWindowType]);
+Binary files dwm-6.0-original/dwm.o and dwm-6.0-custom/dwm.o differ
