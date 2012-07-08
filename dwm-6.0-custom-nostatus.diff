@@ -19,7 +19,7 @@ diff -up dwm-6.0-custom/config.h dwm-6.0-modified/config.h
 Binary files dwm-6.0-custom/dwm and dwm-6.0-modified/dwm differ
 diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
 --- dwm-6.0-custom/dwm.c	2012-07-08 05:36:48.817960376 -0600
-+++ dwm-6.0-modified/dwm.c	2012-07-08 05:36:06.341293796 -0600
++++ dwm-6.0-modified/dwm.c	2012-07-08 05:43:16.561290180 -0600
 @@ -80,7 +80,7 @@ enum { NetSupported, NetSystemTray, NetS
  	   NetWMWindowTypeDialog, NetLast }; /* EWMH atoms */
  enum { Manager, Xembed, XembedInfo, XLast }; /* Xembed atoms */
@@ -46,15 +46,16 @@ diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
  		else
  			click = ClkWinTitle;
  	}
-@@ -846,7 +843,6 @@ dirtomon(int dir) {
+@@ -846,7 +843,7 @@ dirtomon(int dir) {
  
  void
  drawbar(Monitor *m) {
 -	int x;
++  int x;
  	unsigned int i, occ = 0, urg = 0;
  	unsigned long *col;
  	Client *c;
-@@ -869,31 +865,6 @@ drawbar(Monitor *m) {
+@@ -869,21 +866,8 @@ drawbar(Monitor *m) {
  	dc.w = blw = TEXTW(m->ltsymbol);
  	drawtext(m->ltsymbol, dc.norm, False);
  	dc.x += dc.w;
@@ -73,20 +74,12 @@ diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
 -	}
 -	else
 -		dc.x = m->ww;
--	if((dc.w = dc.x - x) > bh) {
--		dc.x = x;
--		if(m->sel) {
--			col = m == selmon ? dc.sel : dc.norm;
--			drawtext(m->sel->name, col, False);
--			drawsquare(m->sel->isfixed, m->sel->isfloating, False, col);
--		}
--		else
--			drawtext(NULL, dc.norm, False);
--	}
- 	XCopyArea(dpy, dc.drawable, m->barwin, dc.gc, 0, 0, m->ww, bh, 0, 0);
- 	XSync(dpy, False);
- }
-@@ -1468,9 +1439,7 @@ propertynotify(XEvent *e) {
++  x = dc.x;
++	dc.x = m->ww;
+ 	if((dc.w = dc.x - x) > bh) {
+ 		dc.x = x;
+ 		if(m->sel) {
+@@ -1468,9 +1452,7 @@ propertynotify(XEvent *e) {
  		resizebarwin(selmon);
  		updatesystray();
  	}
@@ -97,7 +90,7 @@ diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
  		return; /* ignore */
  	else if((c = wintoclient(ev->window))) {
  		switch(ev->atom) {
-@@ -1854,7 +1823,6 @@ setup(void) {
+@@ -1854,7 +1836,6 @@ setup(void) {
  	updatesystray();
  	/* init bars */
  	updatebars();
@@ -105,7 +98,7 @@ diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
  	/* EWMH support per view */
  	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
  			PropModeReplace, (unsigned char *) netatom, NetLast);
-@@ -2301,13 +2269,6 @@ updatetitle(Client *c) {
+@@ -2301,13 +2282,6 @@ updatetitle(Client *c) {
  }
  
  void
