@@ -1,0 +1,11 @@
+--- dwm-6.0-original/config.h	2012-07-08 01:37:39.533236414 -0600
++++ dwm-6.0-custom/config.h	2012-07-08 01:36:03.123237386 -0600
+@@ -47,7 +47,7 @@ static const Layout layouts[] = {
+ 
+ /* commands */
+ static const char *dmenucmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+-static const char *termcmd[]  = { "uxterm", NULL };
++static const char *termcmd[]  = { "urxvt", NULL };
+ 
+ static Key keys[] = {
+ 	/* modifier                     key        function        argument */
