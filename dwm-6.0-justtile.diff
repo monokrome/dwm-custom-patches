@@ -1,0 +1,14 @@
+diff -up dwm-6.0-original/config.h dwm-6.0-custom/config.h
+--- dwm-6.0-original/config.h	2012-07-08 01:37:39.533236414 -0600
++++ dwm-6.0-custom/config.h	2012-07-08 02:27:11.719985283 -0600
+@@ -29,8 +29,6 @@ static const Bool resizehints = True; /*
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+-	{ "[]=",      tile },    /* first entry is default */
+-	{ "><>",      NULL },    /* no layout function means floating behavior */
+ 	{ "[M]",      monocle },
+ };
+ 
+Binary files dwm-6.0-original/dwm and dwm-6.0-custom/dwm differ
+Binary files dwm-6.0-original/dwm.o and dwm-6.0-custom/dwm.o differ
