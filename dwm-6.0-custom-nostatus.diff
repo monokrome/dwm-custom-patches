@@ -1,0 +1,122 @@
+diff -up dwm-6.0-custom/config.h dwm-6.0-modified/config.h
+--- dwm-6.0-custom/config.h	2012-07-08 05:36:48.141293694 -0600
++++ dwm-6.0-modified/config.h	2012-07-08 05:35:44.034627957 -0600
+@@ -83,13 +83,12 @@ static Key keys[] = {
+ };
+ 
+ /* button definitions */
+-/* click can be ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
++/* click can be ClkLtSymbol, ClkWinTitle, ClkClientWin, or ClkRootWin */
+ static Button buttons[] = {
+ 	/* click                event mask      button          function        argument */
+ 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+ 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+ 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+ 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+ 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
+ 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+Binary files dwm-6.0-custom/dwm and dwm-6.0-modified/dwm differ
+diff -up dwm-6.0-custom/dwm.c dwm-6.0-modified/dwm.c
+--- dwm-6.0-custom/dwm.c	2012-07-08 05:36:48.817960376 -0600
++++ dwm-6.0-modified/dwm.c	2012-07-08 05:36:06.341293796 -0600
+@@ -80,7 +80,7 @@ enum { NetSupported, NetSystemTray, NetS
+ 	   NetWMWindowTypeDialog, NetLast }; /* EWMH atoms */
+ enum { Manager, Xembed, XembedInfo, XLast }; /* Xembed atoms */
+ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
+-enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
++enum { ClkTagBar, ClkLtSymbol, ClkWinTitle,
+        ClkClientWin, ClkRootWin, ClkLast };             /* clicks */
+ 
+ typedef union {
+@@ -272,7 +272,6 @@ static void updatebarpos(Monitor *m);
+ static void updatebars(void);
+ static void updatenumlockmask(void);
+ static void updatesizehints(Client *c);
+-static void updatestatus(void);
+ static void updatesystray(void);
+ static void updatesystrayicongeom(Client *i, int w, int h);
+ static void updatesystrayiconstate(Client *i, XPropertyEvent *ev);
+@@ -510,8 +509,6 @@ buttonpress(XEvent *e) {
+ 		}
+ 		else if(ev->x < x + blw)
+ 			click = ClkLtSymbol;
+-		else if(ev->x > selmon->ww - TEXTW(stext))
+-			click = ClkStatusText;
+ 		else
+ 			click = ClkWinTitle;
+ 	}
+@@ -846,7 +843,6 @@ dirtomon(int dir) {
+ 
+ void
+ drawbar(Monitor *m) {
+-	int x;
+ 	unsigned int i, occ = 0, urg = 0;
+ 	unsigned long *col;
+ 	Client *c;
+@@ -869,31 +865,6 @@ drawbar(Monitor *m) {
+ 	dc.w = blw = TEXTW(m->ltsymbol);
+ 	drawtext(m->ltsymbol, dc.norm, False);
+ 	dc.x += dc.w;
+-	x = dc.x;
+-	if(m == selmon) { /* status is only drawn on selected monitor */
+-		dc.w = TEXTW(stext);
+-		dc.x = m->ww - dc.w;
+-		if(showsystray && m == selmon) {
+-			dc.x -= getsystraywidth();
+-		}
+-		if(dc.x < x) {
+-			dc.x = x;
+-			dc.w = m->ww - x;
+-		}
+-		drawtext(stext, dc.norm, False);
+-	}
+-	else
+-		dc.x = m->ww;
+-	if((dc.w = dc.x - x) > bh) {
+-		dc.x = x;
+-		if(m->sel) {
+-			col = m == selmon ? dc.sel : dc.norm;
+-			drawtext(m->sel->name, col, False);
+-			drawsquare(m->sel->isfixed, m->sel->isfloating, False, col);
+-		}
+-		else
+-			drawtext(NULL, dc.norm, False);
+-	}
+ 	XCopyArea(dpy, dc.drawable, m->barwin, dc.gc, 0, 0, m->ww, bh, 0, 0);
+ 	XSync(dpy, False);
+ }
+@@ -1468,9 +1439,7 @@ propertynotify(XEvent *e) {
+ 		resizebarwin(selmon);
+ 		updatesystray();
+ 	}
+-	if((ev->window == root) && (ev->atom == XA_WM_NAME))
+-		updatestatus();
+-	else if(ev->state == PropertyDelete)
++	if(ev->state == PropertyDelete)
+ 		return; /* ignore */
+ 	else if((c = wintoclient(ev->window))) {
+ 		switch(ev->atom) {
+@@ -1854,7 +1823,6 @@ setup(void) {
+ 	updatesystray();
+ 	/* init bars */
+ 	updatebars();
+-	updatestatus();
+ 	/* EWMH support per view */
+ 	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
+ 			PropModeReplace, (unsigned char *) netatom, NetLast);
+@@ -2301,13 +2269,6 @@ updatetitle(Client *c) {
+ }
+ 
+ void
+-updatestatus(void) {
+-	if(!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
+-		strcpy(stext, "dwm-"VERSION);
+-	drawbar(selmon);
+-}
+-
+-void
+ updatesystrayicongeom(Client *i, int w, int h) {
+ 	if(i) {
+ 		i->h = bh;
+Binary files dwm-6.0-custom/dwm.o and dwm-6.0-modified/dwm.o differ
