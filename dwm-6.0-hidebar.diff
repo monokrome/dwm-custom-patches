@@ -1,0 +1,12 @@
+diff -up dwm-6.0-original/config.h dwm-6.0-custom/config.h
+--- dwm-6.0-original/config.h	2012-07-08 01:37:39.533236414 -0600
++++ dwm-6.0-custom/config.h	2012-07-08 02:57:44.811389204 -0600
+@@ -10,7 +10,7 @@ static const char selbgcolor[]      = "#
+ static const char selfgcolor[]      = "#eeeeee";
+ static const unsigned int borderpx  = 1;        /* border pixel of windows */
+ static const unsigned int snap      = 32;       /* snap pixel */
+-static const Bool showbar           = True;     /* False means no bar */
++static const Bool showbar           = False;     /* False means no bar */
+ static const Bool topbar            = True;     /* False means bottom bar */
+ 
+ /* tagging */
