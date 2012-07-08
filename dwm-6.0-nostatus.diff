@@ -1,0 +1,120 @@
+diff -up dwm-6.0-original/config.h dwm-6.0-modified/config.h
+--- dwm-6.0-original/config.h	2012-07-08 05:27:48.894632470 -0600
++++ dwm-6.0-modified/config.h	2012-07-08 05:25:32.071300516 -0600
+@@ -93,7 +93,6 @@ static Button buttons[] = {
+ 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+ 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+ 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+ 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+ 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
+ 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+Binary files dwm-6.0-original/dwm and dwm-6.0-modified/dwm differ
+diff -up dwm-6.0-original/dwm.c dwm-6.0-modified/dwm.c
+--- dwm-6.0-original/dwm.c	2011-12-19 08:02:46.000000000 -0700
++++ dwm-6.0-modified/dwm.c	2012-07-08 05:29:24.464631502 -0600
+@@ -62,7 +62,7 @@ enum { NetSupported, NetWMName, NetWMSta
+        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
+        NetWMWindowTypeDialog, NetLast };     /* EWMH atoms */
+ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
+-enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
++enum { ClkTagBar, ClkLtSymbol, ClkWinTitle,
+        ClkClientWin, ClkRootWin, ClkLast };             /* clicks */
+ 
+ typedef union {
+@@ -240,7 +240,6 @@ static void updatebarpos(Monitor *m);
+ static void updatebars(void);
+ static void updatenumlockmask(void);
+ static void updatesizehints(Client *c);
+-static void updatestatus(void);
+ static void updatewindowtype(Client *c);
+ static void updatetitle(Client *c);
+ static void updatewmhints(Client *c);
+@@ -254,7 +253,6 @@ static void zoom(const Arg *arg);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+-static char stext[256];
+ static int screen;
+ static int sw, sh;           /* X display screen geometry width, height */
+ static int bh, blw = 0;      /* bar geometry */
+@@ -449,8 +447,6 @@ buttonpress(XEvent *e) {
+ 		}
+ 		else if(ev->x < x + blw)
+ 			click = ClkLtSymbol;
+-		else if(ev->x > selmon->ww - TEXTW(stext))
+-			click = ClkStatusText;
+ 		else
+ 			click = ClkWinTitle;
+ 	}
+@@ -717,7 +713,6 @@ dirtomon(int dir) {
+ 
+ void
+ drawbar(Monitor *m) {
+-	int x;
+ 	unsigned int i, occ = 0, urg = 0;
+ 	unsigned long *col;
+ 	Client *c;
+@@ -739,28 +734,7 @@ drawbar(Monitor *m) {
+ 	dc.w = blw = TEXTW(m->ltsymbol);
+ 	drawtext(m->ltsymbol, dc.norm, False);
+ 	dc.x += dc.w;
+-	x = dc.x;
+-	if(m == selmon) { /* status is only drawn on selected monitor */
+-		dc.w = TEXTW(stext);
+-		dc.x = m->ww - dc.w;
+-		if(dc.x < x) {
+-			dc.x = x;
+-			dc.w = m->ww - x;
+-		}
+-		drawtext(stext, dc.norm, False);
+-	}
+-	else
+-		dc.x = m->ww;
+-	if((dc.w = dc.x - x) > bh) {
+-		dc.x = x;
+-		if(m->sel) {
+-			col = m == selmon ? dc.sel : dc.norm;
+-			drawtext(m->sel->name, col, False);
+-			drawsquare(m->sel->isfixed, m->sel->isfloating, False, col);
+-		}
+-		else
+-			drawtext(NULL, dc.norm, False);
+-	}
++
+ 	XCopyArea(dpy, dc.drawable, m->barwin, dc.gc, 0, 0, m->ww, bh, 0, 0);
+ 	XSync(dpy, False);
+ }
+@@ -1293,9 +1267,7 @@ propertynotify(XEvent *e) {
+ 	Window trans;
+ 	XPropertyEvent *ev = &e->xproperty;
+ 
+-	if((ev->window == root) && (ev->atom == XA_WM_NAME))
+-		updatestatus();
+-	else if(ev->state == PropertyDelete)
++	if(ev->state == PropertyDelete)
+ 		return; /* ignore */
+ 	else if((c = wintoclient(ev->window))) {
+ 		switch(ev->atom) {
+@@ -1625,7 +1597,6 @@ setup(void) {
+ 		XSetFont(dpy, dc.gc, dc.font.xfont->fid);
+ 	/* init bars */
+ 	updatebars();
+-	updatestatus();
+ 	/* EWMH support per view */
+ 	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
+ 			PropModeReplace, (unsigned char *) netatom, NetLast);
+@@ -2004,13 +1975,6 @@ updatetitle(Client *c) {
+ }
+ 
+ void
+-updatestatus(void) {
+-	if(!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
+-		strcpy(stext, "dwm-"VERSION);
+-	drawbar(selmon);
+-}
+-
+-void
+ updatewindowtype(Client *c) {
+ 	Atom state = getatomprop(c, netatom[NetWMState]);
+ 	Atom wtype = getatomprop(c, netatom[NetWMWindowType]);
