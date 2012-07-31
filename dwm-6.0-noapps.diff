@@ -7,6 +7,6 @@ diff -up dwm-6.0-original/config.h dwm-6.0/config.h
  	/* class      instance    title       tags mask     isfloating   monitor */
 -	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
 -	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
-+  {NULL, NULL, NULL, 0, False},
++  {NULL, NULL, NULL, 0, False, -1},
  };
  
